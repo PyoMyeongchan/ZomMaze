@@ -10,6 +10,7 @@ public enum ZombieState
     Patrol,
     Chase,
     Attack,
+    Damaged,
     Die
 
 }
@@ -21,15 +22,13 @@ public class ZombieManager : MonoBehaviour
     
     public float attackRange = 2.0f; // 사정거리
     public float attackDelay = 2.0f; // 공격딜레이
-    private float nextAttackTime = 0.0f; // 다음 공격 시간 관리
     public Transform[] patrolPoints; // 순찰 경로 지점들
     private int currentPoint = 0; // 현재 순찰 경로 지점
     public float moveSpeed = 2.0f;
     private float trackingRange = 7f; // 추적 범위
-    private bool isAttack = false; // 공격 상태
     public float zombiehp = 10; // 좀비 HP
     private float distanceToTarget; // 타켓과의 거리 계산 값
-    private bool isWaiting = false; // 상태 전환 후 대기 상태 여부
+
     public float idleTime = 2.0f; // 각 상태 전환 후 대기 시간
 
     private Coroutine stateRoutine; 
@@ -50,7 +49,6 @@ public class ZombieManager : MonoBehaviour
     public float jumpDuration = 1.0f;
     private NavMeshLink[] navMeshLinks;
 
-    private bool isStunned = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -287,17 +285,18 @@ public class ZombieManager : MonoBehaviour
         }
     }
     public void TakeDamage(float damage)
-    {
+    {   
         Debug.Log(gameObject.name + ":" + damage + "데미지 받는중");
         zombiehp -= damage;
         animator.SetTrigger("Damage");
         ZombieDamagedSound();
-        trackingRange = 30.0f; // 총맞으면 추적범위 늘어나면서 오게하기
+        trackingRange = 30.0f; 
         gameObject.layer = 10;
-        moveSpeed = 0;
-        
-        // StartCoroutine(StunZombie(0.2f)); // 좀비 스턴시간 
-        Invoke("DamageOff", 0.4f); // 좀비 무적시간
+
+        StartCoroutine(StunZombie(0.6f));
+
+    
+        Invoke("DamageOff", 0.4f);
         
         if (zombiehp <= 0)
         {
@@ -306,27 +305,31 @@ public class ZombieManager : MonoBehaviour
        
     }
 
-    private IEnumerator StunZombie(float duration)
-    {
-        isStunned = true;
-        agent.isStopped = true;
-        yield return new WaitForSeconds(duration);
-        isStunned = false;
-        agent.isStopped = false;
-    }
 
     void DamageOff()
     {
         gameObject.layer = 3;
     }
 
+    private IEnumerator StunZombie(float stunTime)
+    {
+        agent.isStopped = true;
+        agent.velocity = Vector3.zero;
+        yield return new WaitForSeconds(stunTime);
+        agent.isStopped = false;
+    }
+
     private IEnumerator Die()
     {
+       
         Debug.Log(gameObject.name + "사망");
+        agent.isStopped = true;
+        agent.velocity = Vector3.zero;
         animator.SetTrigger("Die");
         ZombieDieSound();
         gameObject.GetComponent<CapsuleCollider>().enabled = false;
-        yield return new WaitForSeconds(2.0f);
+
+        yield return new WaitForSeconds(3.5f);
 
         gameObject.SetActive(false); ;
         

@@ -12,7 +12,7 @@ public class MenuManager : MonoBehaviour
     public Image panel;
     public float fadeDuration = 1.0f;
     public string nextSceneName;
-    private bool isFirstLoad = true;
+    public bool isFirstLoad = true;
     private bool isFading = false;
 
 
@@ -34,11 +34,9 @@ public class MenuManager : MonoBehaviour
     void Start()
     {
         Cursor.lockState = CursorLockMode.Confined;
-        Init();
-
     }
 
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (SceneManager.GetActiveScene().name == "StartScene")
         {
@@ -51,22 +49,29 @@ public class MenuManager : MonoBehaviour
             if (isFirstLoad)
             {
                 nextSceneName = "Tutorial";
+
             }
             else
             {
                 nextSceneName = "Map1";
+
             }
         }
         else if (SceneManager.GetActiveScene().name == "Tutorial")
         {
-            SoundManager.instance.PlayBGM("MapBGM", 1.0f);
             nextSceneName = "LoadingScene";
+            SoundManager.instance.PlayBGM("NoBGM");
 
         }
         else if (SceneManager.GetActiveScene().name == "Map1")
         {
             SoundManager.instance.PlayBGM("MapBGM", 1.0f);
- 
+            nextSceneName = "EndScene";
+
+        }
+        else if (SceneManager.GetActiveScene().name == "EndScene")
+        {
+            SoundManager.instance.PlayBGM("MainBGM", 1.0f);
         }
     }
 
@@ -75,26 +80,12 @@ public class MenuManager : MonoBehaviour
         isFirstLoad = false;
     }
 
-    private void Init()
-    {
-        if (SceneManager.GetActiveScene().name == "StartScene")
-        {
-            SoundManager.instance.PlayBGM("MainBGM", 1.0f);
-        }
-        else if (SceneManager.GetActiveScene().name == "Tutorial")
-        {
-            SoundManager.instance.PlayBGM("MapBGM", 1.0f);
-        }
-        else if (SceneManager.GetActiveScene().name == "Map1")
-        {
-            SoundManager.instance.PlayBGM("MapBGM", 1.0f);
-        }
-    }
 
     public void FadeOutScene()
     {
         if (!isFading)
         {
+            SoundManager.instance.PlaySFX("LoadingSound");
             StartCoroutine(FadeInAndLoadScene(nextSceneName));
         }
     }

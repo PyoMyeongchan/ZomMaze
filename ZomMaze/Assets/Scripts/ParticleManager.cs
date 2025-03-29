@@ -9,8 +9,10 @@ public enum ParticleType
 { 
     Explosion,
     WeaponFire,
+    PistolFire,
     WeaponSmoke,
-    ItemBlink
+    ItemBlink,
+    Blood
 
 
 }
@@ -24,7 +26,10 @@ public class ParticleManager : MonoBehaviour
 
     public GameObject explosionParticle;
     public GameObject weaponFireParticle;
+    public GameObject PistolFireParticle;
     public GameObject WeaponSmokeParticle;
+    public GameObject BloodParticle;
+    public GameObject ItemBlinkParticle;
 
     public int poolSize = 10;
 
@@ -99,10 +104,7 @@ public class ParticleManager : MonoBehaviour
                 StartCoroutine(particleEnd(type, particleObj, particleSystem));
             }
         }
-        else
-        {
-            Debug.LogError($"Particle type {type} not found in dictionary.");
-        }
+
     }
 
     private void AddParticle()
@@ -111,20 +113,32 @@ public class ParticleManager : MonoBehaviour
         particleSystemDic.Clear(); 
         if (!particleSystemDic.ContainsKey(ParticleType.Explosion))
         {
-            Debug.Log("Adding Explosion Particle");
             particleSystemDic.Add(ParticleType.Explosion, explosionParticle);
         }
 
         if (!particleSystemDic.ContainsKey(ParticleType.WeaponFire))
         {
-            Debug.Log("Adding WeaponFire Particle");
             particleSystemDic.Add(ParticleType.WeaponFire, weaponFireParticle);
         }
 
         if (!particleSystemDic.ContainsKey(ParticleType.WeaponSmoke))
         {
-            Debug.Log("Adding WeaponSmoke Particle");
             particleSystemDic.Add(ParticleType.WeaponSmoke, WeaponSmokeParticle);
+        }
+
+        if (!particleSystemDic.ContainsKey(ParticleType.Blood))
+        {
+            particleSystemDic.Add(ParticleType.Blood, BloodParticle);
+        }
+
+        if (!particleSystemDic.ContainsKey(ParticleType.PistolFire))
+        {
+            particleSystemDic.Add(ParticleType.PistolFire, PistolFireParticle);
+        }
+
+        if (!particleSystemDic.ContainsKey(ParticleType.ItemBlink))
+        {
+            particleSystemDic.Add(ParticleType.ItemBlink, ItemBlinkParticle);
         }
     }
 

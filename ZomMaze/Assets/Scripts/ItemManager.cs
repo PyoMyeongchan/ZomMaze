@@ -26,7 +26,7 @@ public class ItemManager : MonoBehaviour
 
     void TurnItem()
     {
-        transform.Rotate(new Vector3(0, 10f, 0) * Time.deltaTime, Space.World);
+        transform.Rotate(new Vector3(0, 10f, 0) * Time.deltaTime*2, Space.World);
     }
 
 
